@@ -10,6 +10,14 @@ Download, organize, and access your MAHE lectures offline with blazing speed and
 
 ---
 
+## ☕ Support This Project
+
+If Semester Stacker has helped you ace your exams or saved you hours of study time, consider supporting the development:
+
+**[☕ Buy Me a Coffee](https://buymeacoffee.com/jaybuddyjay)** — Your support helps maintain and improve this tool for all MAHE students!
+
+---
+
 ## ⚡ Why Semester Stacker?
 
 | Feature | Semester Stacker | Screen Recording |
@@ -136,8 +144,8 @@ Respect copyright and institutional policies.
 ### From Source (Development)
 1. Clone this repository:
    ```bash
-   git clone https://github.com/yourusername/semester-stacker-for-mahe.git
-   cd semester-stacker-for-mahe
+   git clone https://github.com/JayJay-101/semester-stacker-mahe.git
+   cd semester-stacker-mahe
    ```
 
 2. Open Chrome Extensions:
@@ -305,17 +313,6 @@ git clone https://github.com/yourusername/semester-stacker-for-mahe.git
 
 # Test your changes and submit a PR!
 ```
-
----
-
-## ☕ Support & Donations
-
-If Semester Stacker has helped you ace your exams or saved you hours of study time, consider supporting the project:
-
-**☕ Buy Me a Coffee:**
-https://buymeacoffee.com/jaybuddyjay
-
-Your support helps us maintain and improve this tool for all MAHE students!
 
 ---
 
