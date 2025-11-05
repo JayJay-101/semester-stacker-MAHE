@@ -318,7 +318,7 @@ git clone https://github.com/JayJay-101/semester-stacker-mahe.git
 
 ## 🎓 Other Projects
 
-Check out our other open-source extensions for students:
+Check out our other extensions for students:
 
 - **Educational Course Organizer** (for Coursera)
   https://chromewebstore.google.com/detail/educational-course-organi/ppklghfeimkkbaehkecidamheemanfjm
