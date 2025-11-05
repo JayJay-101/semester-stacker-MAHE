@@ -302,7 +302,7 @@ Found a bug? Have a feature request? Please open an issue on GitHub with:
 ### Development Setup
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/semester-stacker-for-mahe.git
+git clone https://github.com/jayjay-101/semester-stacker-mahe.git
 
 # Make your changes to the source files
 
