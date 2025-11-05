@@ -1,0 +1,58 @@
+{
+  "manifest_version": 3,
+  "name": "LMS Swift Download",
+  "version": "4.0",
+  "description": "High-speed LMS video downloader with concurrent streaming and smart organization",
+  
+  "permissions": [
+    "activeTab",
+    "storage",
+    "clipboardWrite",
+    "webNavigation"
+  ],
+  
+  "host_permissions": [
+    "https://learner-mahe.onlinemanipal.com/*",
+    "https://player.vimeo.com/*",
+    "https://*.vimeocdn.com/*",
+    "https://vod-adaptive-ak.vimeocdn.com/*",
+    "https://skyfire.vimeocdn.com/*"
+  ],
+  
+  "background": {
+    "service_worker": "background.js"
+  },
+  
+  "content_scripts": [
+    {
+      "matches": [
+        "https://player.vimeo.com/*",
+        "https://learner-mahe.onlinemanipal.com/*"
+      ],
+      "js": ["injector.js"],
+      "run_at": "document_end",
+      "all_frames": true
+    }
+  ],
+  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Download Vimeo Video"
+  },
+  
+  "web_accessible_resources": [
+    {
+      "resources": ["content.js"],
+      "matches": [
+        "https://player.vimeo.com/*",
+        "https://learner-mahe.onlinemanipal.com/*"
+      ]
+    }
+  ],
+  
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

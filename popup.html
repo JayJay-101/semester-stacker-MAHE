@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Semester Stacker For MAHE</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8f9fa;
+      --text-primary: #202124;
+      --text-secondary: #5f6368;
+      --border-color: #dadce0;
+      --accent: #c5221f;
+      --accent-light: #d93025;
+      --header-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --card-bg: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+      --card-border: #dadce0;
+      --input-bg: #ffffff;
+      --info-bg: #f8f9fa;
+      --green: #1e8e3e;
+      --shimmer: rgba(255, 255, 255, 0.3);
+      --glow-color: rgba(102, 115, 234, 0.15);
+    }
+
+    body.dark-mode {
+      --bg-primary: #0f0f0f;
+      --bg-secondary: #1a1a1a;
+      --text-primary: #e0e0e0;
+      --text-secondary: #b0b0b0;
+      --border-color: #333333;
+      --accent: #ff4b4b;
+      --accent-light: #ff6b6b;
+      --header-bg: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+      --card-bg: linear-gradient(135deg, #1f1f1f 0%, #151515 100%);
+      --card-border: #8b0000;
+      --input-bg: #1f1f1f;
+      --info-bg: #1a1a1a;
+      --green: #66bb6a;
+      --shimmer: rgba(255, 255, 255, 0.05);
+      --glow-color: rgba(255, 75, 75, 0.15);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      width: 400px;
+      min-height: 500px;
+      max-height: 650px;
+      overflow-y: auto;
+      color: var(--text-primary);
+      position: relative;
+      transition: background 0.3s ease, color 0.3s ease;
+      scroll-behavior: smooth;
+    }
+
+    body::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    body::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-color);
+    }
+
+    body::-webkit-scrollbar-thumb {
+      background: var(--accent);
+      border-radius: 10px;
+      border: 2px solid var(--bg-secondary);
+    }
+
+    body::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-light);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    body.dark-mode::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #ff4b4b, #cc0000);
+    }
+
+    body.dark-mode::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #ff6b6b, #ff0000);
+      box-shadow: 0 0 10px rgba(255, 75, 75, 0.5);
+    }
+
+    .header {
+      background: var(--header-bg);
+      color: #ffffff;
+      padding: 16px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid var(--accent);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    body.dark-mode .header {
+      box-shadow: 0 4px 20px rgba(255, 75, 75, 0.3);
+    }
+
+    .header-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+      pointer-events: none;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.5;
+        transform: translate(-50%, -50%) scale(1);
+      }
+
+      50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.1);
+      }
+    }
+
+    .header-content {
+      flex: 1;
+      text-align: left;
+      position: relative;
+      z-index: 1;
+    }
+
+    .header h1 {
+      font-family: 'Orbitron', monospace;
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      margin-bottom: 4px;
+      color: #ffffff;
+    }
+
+    body.dark-mode .header h1 {
+      background: linear-gradient(135deg, #ffffff 0%, #ff4b4b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 20px rgba(255, 75, 75, 0.5);
+    }
+
+    .version {
+      font-family: 'Orbitron', monospace;
+      font-size: 13px;
+      font-weight: 300;
+      letter-spacing: 1px;
+      color: rgba(255, 255, 255, 0.8);
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 8px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .info-btn,
+    .theme-toggle,
+    .config-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .info-btn:hover,
+    .theme-toggle:hover,
+    .config-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    body.dark-mode .info-btn,
+    body.dark-mode .theme-toggle,
+    body.dark-mode .config-btn {
+      background: rgba(42, 42, 42, 0.8);
+      border: 1px solid rgba(255, 75, 75, 0.3);
+    }
+
+    body.dark-mode .info-btn:hover,
+    body.dark-mode .theme-toggle:hover,
+    body.dark-mode .config-btn:hover {
+      background: rgba(255, 75, 75, 0.2);
+      border-color: #ff4b4b;
+      box-shadow: 0 0 15px rgba(255, 75, 75, 0.4);
+    }
+
+
+    .info-panel,
+    .config-panel {
+      background: var(--info-bg);
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .info-panel.hidden,
+    .config-panel.hidden {
+      display: none;
+    }
+
+    .info-panel h2,
+    .config-panel h2 {
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      text-shadow: 0 0 10px var(--accent);
+    }
+
+    .slider {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--border-color);
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .slider::-webkit-slider-thumb:hover {
+      background: var(--accent-light);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent);
+      cursor: pointer;
+      border: none;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .slider::-moz-range-thumb:hover {
+      background: var(--accent-light);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    body.dark-mode .slider {
+      background: #333333;
+    }
+
+    .info-panel a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- ADD THIS NEW RULE --- */
+    .info-panel-link-wrapper {
+      margin-top: 8px;
+    }
+
+    /* --- END OF NEW RULE --- */
+
+    .info-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .info-step:last-child {
+      margin-bottom: 0;
+    }
+
+    .info-step-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .info-step-text {
+      line-height: 1.6;
+    }
+
+    .info-step-text strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .section {
+      padding: 16px;
+      border-bottom: 1px solid var(--border-color);
+      border-left: 3px solid var(--card-border);
+      background: var(--bg-primary);
+      transition: background 0.3s ease;
+    }
+
+    .section:hover {
+      background: var(--bg-secondary);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+      gap: 8px;
+    }
+
+    .section-header .section-title {
+      margin-bottom: 0;
+    }
+
+    .section-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent);
+      text-transform: uppercase;
+      flex: 1;
+    }
+
+    .toggle-icon-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 16px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 4px;
+      line-height: 1;
+      transition: all 0.3s;
+    }
+
+    .toggle-icon-btn:hover {
+      background: var(--border-color);
+      color: var(--accent);
+    }
+
+    .section-content {
+      max-height: 1000px;
+      overflow: hidden;
+      transition: max-height 0.4s ease-in-out, margin-top 0.4s ease-in-out;
+      margin-top: 12px;
+    }
+
+    .section-content.collapsed {
+      max-height: 0;
+      margin-top: 0;
+    }
+
+    .help-text {
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .input-group {
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .input-group input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+    }
+
+    .input-group input::placeholder {
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    .saved-indicator {
+      font-size: 13px;
+      color: var(--green);
+      margin-top: 4px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .saved-indicator.show {
+      opacity: 1;
+    }
+
+    .download-btn {
+      position: relative;
+      width: 100%;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-light) 100%);
+      color: #ffffff;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-family: 'Orbitron', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+
+    body.dark-mode .download-btn {
+      box-shadow:
+        0 8px 20px rgba(255, 75, 75, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    .download-btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode .download-btn:hover:not(:disabled) {
+      box-shadow:
+        0 12px 30px rgba(255, 75, 75, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .download-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .download-btn:disabled {
+      background: var(--border-color);
+      color: var(--text-secondary);
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: 0.6;
+    }
+
+    .page-status {
+      text-align: center;
+      padding: 10px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      margin-top: 8px;
+    }
+
+    .page-status.error {
+      color: var(--accent);
+      background: rgba(197, 34, 31, 0.1);
+    }
+
+    body.dark-mode .page-status.error {
+      background: rgba(255, 75, 75, 0.1);
+    }
+
+    .page-status.success {
+      color: var(--green);
+      background: rgba(30, 142, 62, 0.1);
+    }
+
+    body.dark-mode .page-status.success {
+      background: rgba(102, 187, 106, 0.1);
+    }
+
+    .secondary-btn {
+      width: 100%;
+      padding: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .secondary-btn:hover {
+      background: var(--border-color);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    body.dark-mode .secondary-btn:hover {
+      background: #333;
+      box-shadow: 0 0 10px rgba(255, 75, 75, 0.3);
+    }
+
+    .downloads-list,
+    .history-list {
+      max-height: 200px;
+      overflow-y: auto;
+      scrollbar-width: none;
+      /* Firefox */
+      -ms-overflow-style: none;
+      /* IE and Edge */
+      scroll-behavior: smooth;
+    }
+
+    .downloads-list::-webkit-scrollbar,
+    .history-list::-webkit-scrollbar {
+      display: none;
+      /* Chrome, Safari, Opera */
+    }
+
+    .download-item,
+    .history-item {
+      background: var(--card-bg);
+      margin-bottom: 8px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+      position: relative;
+      cursor: pointer;
+      contain: layout style paint;
+      will-change: border-color, box-shadow, opacity, transform;
+    }
+
+    body.dark-mode .download-item,
+    body.dark-mode .history-item {
+      border-left: 2px solid #ff4b4b;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    }
+
+    .download-item:hover,
+    .history-item:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    body.dark-mode .download-item:hover,
+    body.dark-mode .history-item:hover {
+      border-color: #ff4b4b;
+      box-shadow: 0 4px 15px rgba(255, 75, 75, 0.3);
+    }
+
+    .download-header,
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .download-title,
+    .history-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      margin-right: 8px;
+    }
+
+    .cancel-btn {
+      padding: 4px 8px;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    .cancel-btn:hover {
+      opacity: 0.8;
+    }
+
+    .download-meta,
+    .history-meta {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .progress-container {
+      margin-bottom: 4px;
+      contain: layout style;
+    }
+
+    .progress-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 2px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 6px;
+      background: var(--border-color);
+      border-radius: 3px;
+      overflow: hidden;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+      contain: strict;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      /* MODIFICATION: Changed transition for smoother updates */
+      transition: width 0.15s linear;
+      border-radius: 3px;
+      position: relative;
+      will-change: width;
+      contain: layout style paint;
+    }
+
+    body.dark-mode .progress-fill {
+      background: linear-gradient(90deg, #ff4b4b, #ff6b6b);
+      box-shadow: 0 0 10px rgba(255, 75, 75, 0.5);
+      animation: progressGlow 2s ease-in-out infinite;
+    }
+
+    @keyframes progressGlow {
+
+      0%,
+      100% {
+        box-shadow: 0 0 10px rgba(255, 75, 75, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 15px rgba(255, 75, 75, 0.8);
+      }
+    }
+
+    .status-badge {
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-badge.completed {
+      background: #e6f4ea;
+      color: var(--green);
+    }
+
+    body.dark-mode .status-badge.completed {
+      background: rgba(102, 187, 106, 0.2);
+      color: var(--green);
+    }
+
+    .status-badge.error {
+      background: #fce8e6;
+      color: var(--accent);
+    }
+
+    body.dark-mode .status-badge.error {
+      background: rgba(255, 75, 75, 0.2);
+      color: var(--accent-light);
+    }
+
+    .status-badge.cancelled {
+      background: #e8eaed;
+      color: var(--text-secondary);
+    }
+
+    body.dark-mode .status-badge.cancelled {
+      background: rgba(153, 153, 153, 0.2);
+    }
+
+    .history-item-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .copy-history-btn {
+      padding: 4px 10px;
+      background: var(--accent);
+      color: white;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-history-btn:hover {
+      background: var(--accent-light);
+    }
+
+    .copy-history-btn.copied {
+      background: var(--green);
+      border-color: var(--green);
+      color: white;
+    }
+
+    /* --- NEW --- Delete button styles */
+    .delete-history-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      opacity: 0.5;
+      transition: all 0.2s ease;
+    }
+
+    .history-item:hover .delete-history-btn {
+      opacity: 1;
+    }
+
+    .delete-history-btn:hover {
+      background: var(--accent);
+      color: white;
+      opacity: 1;
+      transform: scale(1.1);
+      box-shadow: 0 0 8px var(--accent);
+    }
+
+    body.dark-mode .delete-history-btn {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+    }
+
+    body.dark-mode .delete-history-btn:hover {
+      background: var(--accent);
+      color: white;
+    }
+
+    .delete-history-btn svg {
+      width: 12px;
+      height: 12px;
+      stroke-width: 2.5;
+    }
+
+    /* --- END NEW --- */
+
+
+    .empty-state {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .empty-state-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+      opacity: 0.5;
+    }
+
+    .command-options {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .option-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .option-group:first-child {
+      margin-bottom: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .option-group .label {
+      font-weight: 500;
+    }
+
+    .segmented-control {
+      display: flex;
+      background: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .segmented-control button {
+      border: none;
+      padding: 4px 10px;
+      border-radius: 4px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .segmented-control button .btn-icon {
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+      position: relative;
+      top: -1px;
+      /* Small visual tweak to center it */
+    }
+
+    /* Ensures the SVG icon color matches the button text */
+    .segmented-control button svg {
+      stroke: currentColor;
+    }
+
+    .segmented-control button.active {
+      background: var(--accent);
+      color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    body.dark-mode .segmented-control button.active {
+      background: linear-gradient(135deg, #ff4b4b, #cc0000);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 10px rgba(255, 75, 75, 0.3);
+    }
+
+    .SWITCH1 {
+      position: relative;
+      display: inline-block;
+      width: 34px;
+      height: 20px;
+    }
+
+    .SWITCH1 input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .SWITCH1 .slider1 {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--border-color);
+      transition: .4s;
+      border-radius: 20px;
+    }
+
+    .SWITCH1 .slider1:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    .SWITCH1 input:checked+.slider1 {
+      background-color: var(--accent);
+    }
+
+    .SWITCH1 input:focus+.slider1 {
+      box-shadow: 0 0 1px var(--accent);
+    }
+
+    .SWITCH1 input:checked+.slider1:before {
+      transform: translateX(14px);
+    }
+
+    .history-buttons-container {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .clear-history-btn {
+      flex: 1;
+      padding: 8px;
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .clear-history-btn:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .copy-all-btn {
+      background: var(--accent) !important;
+      color: white !important;
+      border-color: var(--accent) !important;
+    }
+
+    body.dark-mode .copy-all-btn {
+      background: linear-gradient(135deg, #ff4b4b, #cc0000) !important;
+      border-color: #ff6b6b !important;
+    }
+
+    .copy-all-btn:hover {
+      background: var(--accent-light) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode .copy-all-btn:hover {
+      box-shadow: 0 4px 12px rgba(255, 75, 75, 0.5);
+    }
+
+    .inline-confirm {
+      background: var(--info-bg);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 8px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+    }
+
+    body.dark-mode .inline-confirm {
+      box-shadow: 0 0 20px rgba(255, 75, 75, 0.3);
+    }
+
+    .inline-confirm.hidden {
+      display: none;
+    }
+
+    .inline-confirm p {
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .confirm-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .confirm-btn {
+      flex: 1;
+      padding: 6px;
+      border: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .confirm-btn.ok {
+      background: var(--accent);
+      color: white;
+    }
+
+    .confirm-btn.ok:hover {
+      background: var(--accent-light);
+    }
+
+    body.dark-mode .confirm-btn.ok {
+      background: linear-gradient(135deg, #ff4b4b, #cc0000);
+    }
+
+    body.dark-mode .confirm-btn.ok:hover {
+      box-shadow: 0 0 15px rgba(255, 75, 75, 0.6);
+    }
+
+    .confirm-btn.cancel {
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .confirm-btn.cancel:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .footer {
+      background: var(--bg-secondary);
+      padding: 12px 16px;
+      border-top: 1px solid var(--border-color);
+      text-align: center;
+      font-size: 13px;
+      color: var(--text-secondary);
+      position: relative;
+    }
+
+    body.dark-mode .footer {
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+      border-top: 2px solid #ff4b4b;
+    }
+
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+      transition: all 0.3s ease;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    body.dark-mode .footer a {
+      text-shadow: 0 0 5px rgba(255, 75, 75, 0.3);
+    }
+
+    body.dark-mode .footer a:hover {
+      color: var(--accent-light);
+      text-shadow: 0 0 15px rgba(255, 75, 75, 0.8);
+    }
+
+    /* --- MODIFICATION START --- */
+    /* Changed from .footer::before to target the new span */
+    /* --- MODIFICATION START --- */
+    .footer .thunderbolt {
+      display: inline-block;
+      margin: 0 2px;
+      font-size: 22px;
+      /* You can change this to 20px like S.html if you want */
+      pointer-events: none;
+      z-index: 10;
+
+      /* Use the 'electric' animation from S.html */
+      animation: electric 2s ease-in-out infinite;
+
+      /* This hint helps prevent the selection bug */
+      will-change: filter, opacity;
+    }
+
+    @keyframes electric {
+
+      0%,
+      100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 5px #ff4b4b);
+        /* Red glow */
+      }
+
+      50% {
+        opacity: 0.7;
+        filter: drop-shadow(0 0 10px #ffff00);
+        /* Yellow glow */
+      }
+    }
+
+    /* --- MODIFICATION END --- */
+
+    /* Removed .footer::before, body.dark-mode .footer::before, and @keyframes thunderboltGlowDark */
+    /* --- MODIFICATION END --- */
+
+    .hidden {
+      display: none;
+    }
+
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .info-panel a:hover {
+      text-decoration: underline;
+    }
+
+    /* --- ADD THIS RULE --- */
+    .info-panel .help-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* --- END OF NEW RULE --- */
+
+    .info-panel-link-wrapper {
+      margin-top: 8px;
+    }
+
+    #globalOsLinux {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    #globalOsWindows {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      font-family: sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    /* 2. Prepare the SVG panes for animation */
+    #globalOsWindows .pane {
+      /* Set the origin point for scaling */
+      transform-origin: center center;
+
+      /* Start scaled down to 0 (invisible).
+        This is the "not hovered" state.
+      */
+      transform: scale(0);
+
+      /* Animate the 'transform' property when it changes.
+        This handles both the hover-on and hover-off animations.
+      */
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      /* 'ease-out-back' style */
+    }
+
+    /* 3. Trigger the animation ON HOVER */
+    #globalOsWindows:hover .pane {
+      /* On hover, scale back to normal size (1) */
+      transform: scale(1);
+    }
+
+    /* 4. Add staggered delays for the "pop-in" effect */
+    /* We only need to delay the *start* of the animation */
+    #globalOsWindows #pane1 {
+      transition-delay: 0s;
+    }
+
+    #globalOsWindows #pane2 {
+      transition-delay: 0.05s;
+    }
+
+    #globalOsWindows #pane3 {
+      transition-delay: 0.1s;
+    }
+
+    #globalOsWindows #pane4 {
+      transition-delay: 0.15s;
+    }
+
+    /* When hovering *off*, we want them all to disappear quickly,
+       so we reset the delay.
+    */
+    #globalOsWindows:hover #pane1,
+    #globalOsWindows:hover #pane2,
+    #globalOsWindows:hover #pane3,
+    #globalOsWindows:hover #pane4 {
+      transition-delay: 0s;
+    }
+
+    /* Elegant SVG Icon Animations */
+
+    #openFullGuideBtn svg,
+    #openFFmpegBtn svg {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0.9;
+    }
+
+    /* Entrance animations */
+    #openFullGuideBtn svg {
+      animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    #openFFmpegBtn svg {
+      animation: fadeInScale 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
+    }
+
+    /* Hover state - elegant reveal */
+    #openFullGuideBtn:hover svg {
+      opacity: 1;
+      transform: scale(1.1) rotate(2deg);
+    }
+
+    #openFFmpegBtn:hover svg {
+      opacity: 1;
+      transform: scale(1.1) rotate(-2deg);
+    }
+
+    /* Focus state */
+    #openFullGuideBtn:focus svg,
+    #openFFmpegBtn:focus svg {
+      transform: scale(1.15);
+      opacity: 1;
+    }
+
+    /* Smooth fade in with subtle scale */
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      to {
+        opacity: 0.9;
+        transform: scale(1);
+      }
+    }
+
+    /* Button press effect */
+    #openFullGuideBtn:active svg,
+    #openFFmpegBtn:active svg {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header-glow"></div>
+  <div class="header">
+    <div class="header-content">
+      <h1>🎬 Semester Stacker For MAHE</h1>
+      <div class="version">v6.6</div>
+    </div>
+    <div class="header-controls">
+      <button class="info-btn" id="infoBtn" title="How to use">❓ Help</button>
+      <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+      <button class="config-btn" id="configBtn" title="Settings">⚙️</button>
+    </div>
+  </div>
+  <div class="info-panel hidden" id="infoPanel">
+    <h2>About This Extension</h2>
+    <p style="padding: 20px; text-align: center; color: var(--text-secondary); line-height: 1.6;">
+      This extension downloads Vimeo lectures from your university's LMS with high speed and quality.
+    </p>
+    <div style="padding: 16px; display: flex; flex-direction: column; gap: 8px;">
+      <button id="openFullGuideBtn"
+        style="padding: 10px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        Read Full Guide
+      </button>
+      <button id="openFFmpegBtn"
+        style="padding: 10px; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        Download FFmpeg
+      </button>
+    </div>
+  </div>
+
+  <div class="config-panel hidden" id="configPanel">
+    <h2>⚙️ Settings</h2>
+    <div style="padding: 16px;">
+      <div class="input-group">
+        <label for="concurrencySlider">Concurrency (5 - 120)</label>
+        <div style="display: flex; align-items: center; gap: 12px; margin-top: 8px;">
+          <input type="range" id="concurrencySlider" min="5" max="120" value="66" class="slider">
+          <span id="concurrencyValue" style="min-width: 35px; text-align: center; font-weight: 600;">66</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📁 Folder Settings</div>
+      <button class="toggle-icon-btn" id="folderSettingsToggle" title="Toggle settings">▼</button>
+    </div>
+
+    <div class="section-content" id="folderSettingsContent">
+      <p class="help-text">Set your download path. 'Copy Setup' gives a command to create this folder structure on your
+        PC.</p>
+
+      <div class="input-group">
+        <label for="semester">Semester</label>
+        <input type="text" id="semester" placeholder="e.g., Fall_2024">
+        <div class="saved-indicator" id="semesterSaved">Saved</div>
+      </div>
+      <div class="input-group">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" placeholder="e.g., Data_Structures">
+        <div class="saved-indicator" id="subjectSaved">Saved</div>
+      </div>
+
+      <div id="additionalFoldersContainer"></div>
+
+      <div style="display: flex; gap: 8px; margin-top: 8px;">
+        <button id="addFolderBtn" class="secondary-btn" style="flex: 1;">
+          ➕ Add Folder
+        </button>
+      </div>
+
+      <button class="secondary-btn" id="copySetupBtn" style="margin-top: 12px; width: 100%;">
+        📋 Copy Folder Setup Command
+      </button>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="download-btn" id="downloadBtn" disabled>
+      🚀 Download Now
+    </button>
+    <div class="page-status" id="pageStatus">
+      Checking current page...
+    </div>
+  </div>
+
+  <div class="section" id="activeDownloadsSection">
+    <div class="section-title">⏳ Active Downloads</div>
+    <div class="downloads-list" id="downloadsList">
+      <div class="empty-state">
+        <div class="empty-state-icon">📦</div>
+        <div>No active downloads</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <div class="section-title">📜 Download History & Merge</div>
+    </div>
+
+    <p class="help-text">Click a completed item (or its 'Copy' button) to copy its command. <strong>'Copy All'</strong>
+      copies every command in order.</p>
+
+    <div class="history-list" id="historyList">
+      <div class="empty-state">
+        <div class="empty-state-icon">📕</div>
+        <div>No download history</div>
+      </div>
+    </div>
+
+    <div class="command-options" id="commandOptions">
+      <div class="option-group">
+        <div class="label">Platform</div>
+        <div class="segmented-control">
+          <button id="globalOsLinux" class="active" title="Linux/macOS">🐧 Linux/macOS</button>
+          <button id="globalOsWindows" title="Windows">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="btn-icon">
+              <rect class="pane" id="pane1" x="3" y="3" width="8.5" height="8.5" />
+              <rect class="pane" id="pane2" x="12.5" y="3" width="8.5" height="8.5" />
+              <rect class="pane" id="pane3" x="3" y="12.5" width="8.5" height="8.5" />
+              <rect class="pane" id="pane4" x="12.5" y="12.5" width="8.5" height="8.5" />
+            </svg>
+            Windows
+          </button>
+        </div>
+      </div>
+      <div class="option-group">
+        <div class="label" title="Include 'rm' or 'del' to delete temp files after merge">Include Cleanup</div>
+        <label class="SWITCH1">
+          <input type="checkbox" id="globalRmToggle">
+          <span class="slider1"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="history-buttons-container" id="historyButtonsContainer">
+      <button class="clear-history-btn copy-all-btn" id="copyAllHistoryBtn">📋 Copy All</button>
+      <button class="clear-history-btn" id="clearHistoryBtn">Clear History</button>
+    </div>
+
+    <div class="inline-confirm hidden" id="clearHistoryConfirm">
+      <p>Are you sure you want to clear all history?</p>
+      <div class="confirm-buttons">
+        <button class="confirm-btn ok" id="confirmClearHistoryBtn">OK</button>
+        <button class="confirm-btn cancel" id="cancelClearHistoryBtn">Cancel</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <!-- --- MODIFICATION START --- -->
+    <!-- Changed ⚡ to a span for better CSS control -->
+    Made with <span class="thunderbolt">⚡</span> for LMS | <a href="#" id="helpLink">Help</a>
+    <!-- --- MODIFICATION END --- -->
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+
+</html>
