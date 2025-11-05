@@ -302,7 +302,7 @@ Found a bug? Have a feature request? Please open an issue on GitHub with:
 ### Development Setup
 ```bash
 # Clone the repo
-git clone https://github.com/jayjay-101/semester-stacker-mahe.git
+git clone https://github.com/yourusername/semester-stacker-for-mahe.git
 
 # Make your changes to the source files
 
@@ -352,10 +352,27 @@ Built with ❤️ for MAHE students. Thanks to everyone who has tested, provided
 
 ---
 
+## 📢 Important Notice
+
+**The original developer is graduating and will lose access to MAHE LMS.** To ensure this tool continues to help future MAHE students, **community maintenance is critical**.
+
+### 🤝 Developers Your Help Is Required!
+
+If you find this tool valuable, please consider:
+1. **Forking the repository** – Ensure continuity if the original becomes inactive
+2. **Testing on your LMS access** – Report issues and bugs you encounter
+3. **Contributing fixes** – Submit PRs to keep the tool working
+4. **Becoming a maintainer** – Help keep this alive for future students
+
+This is a community project now. Your contributions directly impact thousands of students' study experience.
+
+---
+
 **Happy studying! Your lectures, your schedule, your success. 🚀**
 
 If you find this tool helpful, please consider:
 - ⭐ Starring the repository
 - 📤 Sharing with fellow MAHE students
 - 💬 Providing feedback and suggestions
+- 🍴 **Forking to maintain** – Keep it alive for future students!
 - ☕ Supporting development on Buy Me a Coffee
