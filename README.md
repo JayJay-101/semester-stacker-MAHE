@@ -16,6 +16,10 @@ If Semester Stacker has helped you ace your exams or saved you hours of study ti
 
 **[☕ Buy Me a Coffee](https://buymeacoffee.com/jaybuddyjay)** — Your support helps maintain and improve this tool for all MAHE students!
 
+please consider:
+- ⭐ Starring the repository and share with fellow mahe students
+
+
 ---
 
 ## ⚡ Why Semester Stacker?
